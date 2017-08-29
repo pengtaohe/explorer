@@ -9,13 +9,13 @@
 #include "audioplay.h"
 #include "videoplay.h"
 #include "calendar.h" 	 
-#include "nesplay.h"	 
+//#include "nesplay.h"	 
 #include "notepad.h"
 #include "exeplay.h"
 #include "paint.h"
 #include "camera.h"
 #include "recorder.h"
-#include "usbplay.h"
+//#include "usbplay.h"
 #include "netplay.h"
 #include "wirelessplay.h"
 #include "calculator.h"
@@ -537,13 +537,13 @@ void main_task(void *pdata)
 			case 3:video_play();break;		//视频播放
 			case 4:calendar_play();break;	//时钟 
 			case 5:sysset_play();break;		//系统设置
-			case 6:nes_play();break;		//NES游戏
+			//case 6:nes_play();break;		//NES游戏
 			case 7:notepad_play();break;	//记事本	
 			case 8:exe_play();break;		//运行器
 			case 9:paint_play();break;		//手写画笔
 			case 10:camera_play();break;	//摄像头
 			case 11:recorder_play();break;	//录音机
-			case 12:usb_play();break;		//USB连接
+			//case 12:usb_play();break;		//USB连接
 	    	case 13:net_play();break;		//网络测试
 			case 14:wireless_play();break;	//无线传书
  			case 15:calc_play();break;		//计算器   
