@@ -31,14 +31,12 @@
 #include "lsens.h"
 #include "usb_app.h"
 
-//ALIENTEK 探索者STM32F407开发板 实验58
-//综合测试 实验      --库函数版本
-//技术支持：www.openedv.com
-//淘宝店铺：http://eboard.taobao.com  
-//广州市星翼电子科技有限公司  
-//作者：正点原子 @ALIENTEK
+/*  ,hept, 2017.8.29 */
+#define MODULE_SHELL
+#ifdef MODULE_SHELL
+#include "shell.h"
+#endif
 
- 
 /////////////////////////UCOSII任务设置///////////////////////////////////
 //START 任务
 //设置任务优先级
@@ -49,7 +47,19 @@
 __align(8) static OS_STK START_TASK_STK[START_STK_SIZE];
 //任务函数
 void start_task(void *pdata);	
- 			   
+
+#ifdef  MODULE_SHELL
+//SHELL任务
+//设置任务优先级
+#define SHELL_TASK_PRIO       			8 
+//设置任务堆栈大小
+#define SHELL_STK_SIZE  		    	256
+//任务堆栈，8字节对齐	
+__align(8) static OS_STK SHELL_TASK_STK[SHELL_STK_SIZE];
+//任务函数
+void shell_task(void *pdata);
+#endif
+			   
 //串口任务
 //设置任务优先级
 #define USART_TASK_PRIO       			7 
@@ -512,7 +522,10 @@ void start_task(void *pdata)
 	OS_ENTER_CRITICAL();//进入临界区(无法被中断打断)    
  	OSTaskCreate(main_task,(void *)0,(OS_STK*)&MAIN_TASK_STK[MAIN_STK_SIZE-1],MAIN_TASK_PRIO);						   
  	OSTaskCreate(usart_task,(void *)0,(OS_STK*)&USART_TASK_STK[USART_STK_SIZE-1],USART_TASK_PRIO);						   
-	OSTaskCreate(watch_task,(void *)0,(OS_STK*)&WATCH_TASK_STK[WATCH_STK_SIZE-1],WATCH_TASK_PRIO); 					   
+	OSTaskCreate(watch_task,(void *)0,(OS_STK*)&WATCH_TASK_STK[WATCH_STK_SIZE-1],WATCH_TASK_PRIO); 
+#ifdef MODULE_SHELL
+	OSTaskCreate(shell_task,(void *)0,(OS_STK*)&SHELL_TASK_STK[SHELL_STK_SIZE-1],SHELL_TASK_PRIO);
+#endif
 	OSTaskSuspend(START_TASK_PRIO);	//挂起起始任务.
 	OS_EXIT_CRITICAL();	//退出临界区(可以被中断打断)
 } 
@@ -673,6 +686,21 @@ void watch_task(void *pdata)
 		delay_ms(10);
 	}
 }
+
+/* shell task for command line interface ,hept, 2017.8.29 */
+#ifdef MODULE_SHELL
+void shell_task(void *pdata)
+{
+	Shell_init();
+	
+	while(1)
+	{
+		Shell_process();
+		delay_ms(1);
+	}
+}
+#endif
+
 //硬件错误处理
 void HardFault_Handler(void)
 {
@@ -697,47 +725,5 @@ void HardFault_Handler(void)
  	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
