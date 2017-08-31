@@ -103,7 +103,7 @@ void uart_init(u32 bound){
 	
 	//USART_ClearFlag(USART1, USART_FLAG_TC);
 	
-#if EN_USART1_RX	
+#if 0 /* Disable the "RXNE" interrupt  ,hept, 2017.8.30 */	
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);//开启相关中断
 
 	//Usart1 NVIC 配置
@@ -125,7 +125,7 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	OSIntEnter();    
 #endif
 
-#if 0 	/* receive uart data by task "shell"  ,hept, 2017.8.30 */
+#if 0 	/* Disable the "RXNE" interrupt  ,hept, 2017.8.30 */
 	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 		Res =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据

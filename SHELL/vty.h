@@ -58,7 +58,7 @@ typedef struct _VTY_ACCOUNT
 	UINT8        username[MAX_LEN_USERNAME];
 	UINT8        password[MAX_LEN_PASSWORD];
 	VTY_PROPERTY property;
-	UINT8		 flag;
+	ACCOUNT_STATE flag;
 }VTY_ACCOUNT;
 
 #define VTY_IO_BUFFER_LEN  64

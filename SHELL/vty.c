@@ -9,7 +9,6 @@
 
 static VTY_STRUCT VtyData[MAX_VTY];
 static VTY_STRUCT *pVtyFirst = NULL;
-static ACCOUNT_STATE accountState[MAX_ACCOUNT] = {ACCOUNT_USED,ACCOUNT_USED,ACCOUNT_USED};
 static VTY_ACCOUNT VtyAccount[MAX_ACCOUNT];
 
 
@@ -80,12 +79,12 @@ UINT8 VtyAddUser(const char *user, const char *pwd, VTY_PROPERTY pro)
 	UINT8 i, rel = 0;
 	for(i = 0; i < MAX_ACCOUNT; i ++)
 	{
-		if(0 == VtyAccount[i].flag)
+		if(ACCOUNT_FREE == VtyAccount[i].flag)
 		{
 			strcpy((char*)VtyAccount[i].username, user);
 			strcpy((char*)VtyAccount[i].password , pwd);
 			VtyAccount[i].property = pro;
-			VtyAccount[i].flag = 1;
+			VtyAccount[i].flag = ACCOUNT_USED;
 			rel = 1;
 		} 
 	}
@@ -98,9 +97,10 @@ VTY_ACCOUNT * VtyMatchUser( char *username )
 
     for( i = 0; i < MAX_ACCOUNT; i++ )
     {
-        if( accountState[i] == ACCOUNT_USED )
+        if( ACCOUNT_USED == VtyAccount[i].flag )
         {
-            if( !strcmp( username, (char *)VtyAccount[i].username ) ) return (VTY_ACCOUNT *)&VtyAccount[i];
+            if( !strcmp( username, (char *)VtyAccount[i].username ) ) 
+				return (VTY_ACCOUNT *)&VtyAccount[i];
         }
     }
     return NULL;
@@ -124,7 +124,7 @@ VTY_STATUS DeleteVty( VTY_STRUCT *pVty )
 INT8 ConsoleReadChar( void )
 {
 	register INT8 key = 0; 
-	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+	if(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
     {
         key = (UINT8)USART_ReceiveData(USART1);
         print_port_type = COM_PORT;
@@ -159,6 +159,7 @@ int ConsoleTask( void )
 
         ShellTask( vty, key );
     }
+    
     return VTY_OK;
 }
 

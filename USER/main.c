@@ -598,7 +598,7 @@ void usart_task(void *pdata)
 		}
 		if(sim900dev.mode==3)phone_ring();//蜂鸣器,来电提醒
 		if(systemset.lcdbklight==0)app_lcd_auto_bklight();	//自动背光控制
-		printf("in:%d,ex:%d,ccm:%d\r\n",my_mem_perused(0),my_mem_perused(1),my_mem_perused(2));//打印内存占用率
+		//printf("in:%d,ex:%d,ccm:%d\r\n",my_mem_perused(0),my_mem_perused(1),my_mem_perused(2));//打印内存占用率
 	}
 }
 
@@ -691,6 +691,7 @@ void watch_task(void *pdata)
 #ifdef MODULE_SHELL
 void shell_task(void *pdata)
 {
+	printf("\r\nStart task \"shell\".\r\n");
 	Shell_init();
 	
 	while(1)
