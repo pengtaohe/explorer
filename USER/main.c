@@ -7,7 +7,7 @@
 #include "settings.h"
 #include "picviewer.h"
 #include "audioplay.h"
-#include "videoplay.h"
+//#include "videoplay.h"
 #include "calendar.h" 	 
 //#include "nesplay.h"	 
 #include "notepad.h"
@@ -547,7 +547,7 @@ void main_task(void *pdata)
 			case 0:ebook_play();break;		//电子图书 
 			case 1:picviewer_play();break;	//数码相框  
 			case 2:audio_play();break;		//音乐播放 
-			case 3:video_play();break;		//视频播放
+			//case 3:video_play();break;		//视频播放
 			case 4:calendar_play();break;	//时钟 
 			case 5:sysset_play();break;		//系统设置
 			//case 6:nes_play();break;		//NES游戏

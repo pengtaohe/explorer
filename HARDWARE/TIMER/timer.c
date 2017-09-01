@@ -260,14 +260,14 @@ void TIM9_CH2_PWM_Init(u16 arr,u16 psc)
 	
 	TIM_Cmd(TIM9, ENABLE);  //使能TIM9 
 }  
-extern vu8 aviframeup; 
+//extern vu8 aviframeup; 
 //定时器6中断服务程序	 
 void TIM6_DAC_IRQHandler(void)
 { 		
 	OSIntEnter();    		    
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update)==SET) //溢出中断
 	{ 
-		aviframeup=1;
+		//aviframeup=1;
 	}				   
 	TIM_ClearITPendingBit(TIM6,TIM_IT_Update);  //清除中断标志位      
 	OSIntExit();  											 
