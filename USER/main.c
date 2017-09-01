@@ -18,7 +18,7 @@
 //#include "usbplay.h"
 #include "netplay.h"
 #include "wirelessplay.h"
-#include "calculator.h"
+//#include "calculator.h"
 #include "phoneplay.h"
 #include "appplay.h"
 #include "smsplay.h"
@@ -559,7 +559,7 @@ void main_task(void *pdata)
 			//case 12:usb_play();break;		//USB连接
 	    	case 13:net_play();break;		//网络测试
 			case 14:wireless_play();break;	//无线传书
- 			case 15:calc_play();break;		//计算器   
+ 			//case 15:calc_play();break;		//计算器   
 			case 16:phone_play();break;		//电话功能
  			case 17:app_play();break;		//APP 
  			case 18:sms_play();break;		//短信功能

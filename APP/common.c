@@ -2,7 +2,7 @@
 #include "spb.h"
 #include "recorder.h"
 #include "appplay.h"
-#include "calculator.h"	
+//#include "calculator.h"	
 #include "settings.h"
 #include "calendar.h"	
 #include "phoneplay.h"	

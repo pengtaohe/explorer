@@ -809,11 +809,6 @@
               <FilePath>..\APP\wirelessplay.c</FilePath>
             </File>
             <File>
-              <FileName>calculator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\calculator.c</FilePath>
-            </File>
-            <File>
               <FileName>phoneplay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\APP\phoneplay.c</FilePath>
