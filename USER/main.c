@@ -6,7 +6,7 @@
 #include "ebook.h"
 #include "settings.h"
 #include "picviewer.h"
-#include "audioplay.h"
+//#include "audioplay.h"
 //#include "videoplay.h"
 #include "calendar.h" 	 
 //#include "nesplay.h"	 
@@ -14,7 +14,7 @@
 #include "exeplay.h"
 #include "paint.h"
 #include "camera.h"
-#include "recorder.h"
+//#include "recorder.h"
 //#include "usbplay.h"
 #include "netplay.h"
 #include "wirelessplay.h"
@@ -510,7 +510,7 @@ int main(void)
  	OSTaskCreate(start_task,(void *)0,(OS_STK *)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO );//创建起始任务
 	OSStart();	  						    
 }
-extern OS_EVENT * audiombox;	//音频播放任务邮箱
+//extern OS_EVENT * audiombox;	//音频播放任务邮箱
 //开始任务
 void start_task(void *pdata)
 {
@@ -518,7 +518,7 @@ void start_task(void *pdata)
 	pdata = pdata; 	   
 	OSStatInit();		//初始化统计任务.这里会延时1秒钟左右	
  	app_srand(OSTime);
-  	audiombox=OSMboxCreate((void*) 0);	//创建邮箱
+//  	audiombox=OSMboxCreate((void*) 0);	//创建邮箱
 	OS_ENTER_CRITICAL();//进入临界区(无法被中断打断)    
  	OSTaskCreate(main_task,(void *)0,(OS_STK*)&MAIN_TASK_STK[MAIN_STK_SIZE-1],MAIN_TASK_PRIO);						   
  	OSTaskCreate(usart_task,(void *)0,(OS_STK*)&USART_TASK_STK[USART_STK_SIZE-1],USART_TASK_PRIO);						   
@@ -546,7 +546,7 @@ void main_task(void *pdata)
 		{   
 			case 0:ebook_play();break;		//电子图书 
 			case 1:picviewer_play();break;	//数码相框  
-			case 2:audio_play();break;		//音乐播放 
+			//case 2:audio_play();break;		//音乐播放 
 			//case 3:video_play();break;		//视频播放
 			case 4:calendar_play();break;	//时钟 
 			case 5:sysset_play();break;		//系统设置
@@ -555,7 +555,7 @@ void main_task(void *pdata)
 			case 8:exe_play();break;		//运行器
 			case 9:paint_play();break;		//手写画笔
 			case 10:camera_play();break;	//摄像头
-			case 11:recorder_play();break;	//录音机
+			//case 11:recorder_play();break;	//录音机
 			//case 12:usb_play();break;		//USB连接
 	    	case 13:net_play();break;		//网络测试
 			case 14:wireless_play();break;	//无线传书

@@ -1,13 +1,12 @@
 #include "common.h"
 #include "spb.h"
-#include "recorder.h"
 #include "appplay.h"
 //#include "calculator.h"	
 #include "settings.h"
 #include "calendar.h"	
 #include "phoneplay.h"	
-#include "audioplay.h"	
-#include "recorder.h"	 
+//#include "audioplay.h"	
+//#include "recorder.h"	 
 #include "paint.h"
 #include "lsens.h"
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -821,6 +820,7 @@ u8 app_system_file_check(u8* diskx)
 		if(res)break;			//打开失败      
     	f_close(f_check);		//关闭文件     
 		rval++;	
+#if 0	/* remove audioplay  ,hept, 2017.9.2 */
 		//APP/AUDIO 文件夹内15个文件检测
 		for(j=0;j<2;j++)
 		{
@@ -854,6 +854,7 @@ u8 app_system_file_check(u8* diskx)
 		if(res)break;			//打开失败      
     	f_close(f_check);		//关闭文件     
 		rval++;	 
+#endif
 		//APP/PHONE 文件夹内9个文件检测
  		for(j=0;j<3;j++)
 		{ 
@@ -881,7 +882,8 @@ u8 app_system_file_check(u8* diskx)
 			f_close(f_check);		//关闭文件 
 			rval++; 
 		}
-		if(j!=3)break;	 
+		if(j!=3)break;	
+#if 0
 		//检测录音机7个图标
 		app_system_file_chgdisk(path,diskx,RECORDER_DEMO_PIC); 
 		res=f_open(f_check,(const TCHAR*)path,FA_READ);//只读方式打开文件
@@ -917,7 +919,8 @@ u8 app_system_file_check(u8* diskx)
 		res=f_open(f_check,(const TCHAR*)path,FA_READ);//只读方式打开文件
 		if(res)break;			//打开失败      
     	f_close(f_check);		//关闭文件     
-  		rval++;		  
+  		rval++;		
+#endif
 		//检测应用程序48个图标
 		for(j=0;j<3;j++)
 		{

@@ -749,11 +749,6 @@
               <FilePath>..\APP\picviewer.c</FilePath>
             </File>
             <File>
-              <FileName>audioplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\audioplay.c</FilePath>
-            </File>
-            <File>
               <FileName>lyric.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\APP\lyric.c</FilePath>
@@ -787,11 +782,6 @@
               <FileName>camera.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\APP\camera.c</FilePath>
-            </File>
-            <File>
-              <FileName>recorder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\recorder.c</FilePath>
             </File>
             <File>
               <FileName>netplay.c</FileName>
@@ -972,181 +962,6 @@
               <FileName>os_cfg.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\UCOSII\CONFIG\os_cfg.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>AUDIOCODEC_WAV</GroupName>
-          <Files>
-            <File>
-              <FileName>wavplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\wav\wavplay.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>AUDIOCODEC_MP3</GroupName>
-          <Files>
-            <File>
-              <FileName>mp3play.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\mp3play.c</FilePath>
-            </File>
-            <File>
-              <FileName>bitstream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\bitstream.c</FilePath>
-            </File>
-            <File>
-              <FileName>buffers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\buffers.c</FilePath>
-            </File>
-            <File>
-              <FileName>dct32.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\dct32.c</FilePath>
-            </File>
-            <File>
-              <FileName>dequant.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\dequant.c</FilePath>
-            </File>
-            <File>
-              <FileName>dqchan.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\dqchan.c</FilePath>
-            </File>
-            <File>
-              <FileName>huffman.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\huffman.c</FilePath>
-            </File>
-            <File>
-              <FileName>hufftabs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\hufftabs.c</FilePath>
-            </File>
-            <File>
-              <FileName>imdct.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\imdct.c</FilePath>
-            </File>
-            <File>
-              <FileName>mp3dec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\mp3dec.c</FilePath>
-            </File>
-            <File>
-              <FileName>mp3tabs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\mp3tabs.c</FilePath>
-            </File>
-            <File>
-              <FileName>scalfact.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\scalfact.c</FilePath>
-            </File>
-            <File>
-              <FileName>stproc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\stproc.c</FilePath>
-            </File>
-            <File>
-              <FileName>subband.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\subband.c</FilePath>
-            </File>
-            <File>
-              <FileName>trigtabs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\trigtabs.c</FilePath>
-            </File>
-            <File>
-              <FileName>asmmisc_rvds.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\arm\asmmisc_rvds.s</FilePath>
-            </File>
-            <File>
-              <FileName>asmpoly_thumb2_rvds.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\AUDIOCODEC\mp3\helix\arm\asmpoly_thumb2_rvds.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>AUDIOCODEC_FLAC</GroupName>
-          <Files>
-            <File>
-              <FileName>flacplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\flac\flacplay.c</FilePath>
-            </File>
-            <File>
-              <FileName>bitstreamf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\flac\flacdec\bitstreamf.c</FilePath>
-            </File>
-            <File>
-              <FileName>flacdecoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\flac\flacdec\flacdecoder.c</FilePath>
-            </File>
-            <File>
-              <FileName>tables.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\flac\flacdec\tables.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>AUDIOCODEC_APE</GroupName>
-          <Files>
-            <File>
-              <FileName>apeplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apeplay.c</FilePath>
-            </File>
-            <File>
-              <FileName>apedecoder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\apedecoder.c</FilePath>
-            </File>
-            <File>
-              <FileName>entropy.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\entropy.c</FilePath>
-            </File>
-            <File>
-              <FileName>filter_16_11.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\filter_16_11.c</FilePath>
-            </File>
-            <File>
-              <FileName>filter_32_10.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\filter_32_10.c</FilePath>
-            </File>
-            <File>
-              <FileName>filter_64_11.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\filter_64_11.c</FilePath>
-            </File>
-            <File>
-              <FileName>parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\parser.c</FilePath>
-            </File>
-            <File>
-              <FileName>predictor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\predictor.c</FilePath>
-            </File>
-            <File>
-              <FileName>predictor-arm.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\AUDIOCODEC\ape\apedec\predictor-arm.S</FilePath>
             </File>
           </Files>
         </Group>

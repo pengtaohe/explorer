@@ -1,7 +1,7 @@
 #include "camera.h"
 #include "common.h"	
 #include "calendar.h"  
-#include "audioplay.h"  
+//#include "audioplay.h"  
 #include "ov2640.h"  
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -284,12 +284,13 @@ u8 camera_play(void)
 	u8 key;
  	u8 scale=1;				//默认是全尺寸缩放
 	u8 tcnt=0;
-
+#if 0	/*  remove audioplay  ,hept, 2017.9.2 */
 	if(audiodev.status&(1<<7))		//当前在放歌??必须停止
 	{
 		audio_stop_req(&audiodev);	//停止音频播放
 		audio_task_delete();		//删除音乐播放任务.
 	}
+#endif
  	//提示开始检测OV2640
  	window_msg_box((lcddev.width-200)/2,(lcddev.height-80)/2,200,80,(u8*)camera_remind_tbl[0][gui_phy.language],(u8*)APP_REMIND_CAPTION_TBL[gui_phy.language],12,0,0,0);
 	if(gui_phy.memdevflag&(1<<0))f_mkdir("0:PHOTO");//强制创建文件夹,给照相机用

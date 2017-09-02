@@ -5,7 +5,7 @@
 #include "t9input.h"
 #include "i2s.h"
 #include "camera.h" 
-#include "audioplay.h"
+//#include "audioplay.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F407开发板
@@ -210,11 +210,12 @@ u8 sms_read_sms(sms_node *pnode,u16 index,u8 mode)
 {
 	u8 *p,*p1,*p2; 
 	u8 res,t=0;
-	
+#if 0 /* remove audioplay  ,hept, 2017.9.2 */
 	if(audiodev.status&(1<<4))
 	{
 		//I2S_Play_Stop();//停止音频播放
 	} 
+#endif
 	p=gui_memin_malloc(200);//申请200个字节的内存
 	if(p==0)return 2;//内存申请失败
 	for(t=0;t<3;t++)//尝试3次
@@ -279,10 +280,12 @@ u8 sms_read_sms(sms_node *pnode,u16 index,u8 mode)
 	}
 	sim900a_cmd_over();	//处理完毕
 	gui_memin_free(p);	//释放内存
+#if 0 /* remove audioplay  ,hept, 2017.9.2 */
 	if(audiodev.status&(1<<4))
 	{
 		//I2S_Play_Start();//开启音频播放	 
 	} 	
+#endif
 	return res;
 } 
 //删除1条短息
@@ -354,10 +357,12 @@ u8 sms_get_smsnum(u16 *num,u16 *max)
 {
 	u8 *p1,*p2;
 	u8 res,i;
+#if 0	/* remove audioplay   ,hept, 2017.9.2 */
 	if(audiodev.status&(1<<4))
 	{ 	 
 		I2S_Play_Stop();//停止音频播放
 	} 
+#endif
 	for(i=0;i<3;i++)//尝试3次
 	{
 		res=sim900a_send_cmd("AT+CPMS?","+CPMS:",50);
@@ -380,10 +385,12 @@ u8 sms_get_smsnum(u16 *num,u16 *max)
 			break;
 		}
 	}
+#if 0 /* remove audioplay  ,hept, 2017.9.2 */
 	if(audiodev.status&(1<<4))
 	{
 		I2S_Play_Start();//开启音频播放  
 	} 
+#endif
 	sim900a_cmd_over();//处理完毕
 	return res;
 }

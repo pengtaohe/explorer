@@ -1,5 +1,5 @@
 #include "netplay.h" 
-#include "audioplay.h"
+//#include "audioplay.h"
 #include "t9input.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -707,11 +707,13 @@ u8 net_play(void)
 	else yoff=210; 
 	tbtn=btn_creat((lcddev.width-180)/2,yoff+(lcddev.height-yoff-60)/2,180,60,0,0);//创建标准按钮
 	if(tbtn==NULL)return 1;//按键创建失败
+#if 0 	/* remove audioplay  ,hept, 2017.9.2 */
 	if(audiodev.status&(1<<7))//当前在放歌??
 	{
 		audio_stop_req(&audiodev);	//停止音频播放
 		audio_task_delete();		//删除音乐播放任务.
 	} 
+#endif
 	window_msg_box((lcddev.width-220)/2,(lcddev.height-100)/2,220,100,(u8*)netplay_remindmsg_tbl[0][gui_phy.language],(u8*)APP_REMIND_CAPTION_TBL[gui_phy.language],12,0,0,0);
   	res=lwip_comm_init();	//lwip初始化 LwIP_Init一定要在OSInit之后和其他LWIP线程创建之前初始化!!!!!!!!
 	if(res==0)				//网卡初始化成功

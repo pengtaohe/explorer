@@ -2,7 +2,7 @@
 #include "spb.h" 
 #include "camera.h" 
 #include "i2s.h" 
-#include "audioplay.h" 
+//#include "audioplay.h" 
 #include "usart3.h" 
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -198,11 +198,13 @@ void phone_incall_task(void *pdata)
 	if(bkcolor&&pdis->phonebuf&&f_phone)//内存申请成功了
 	{
 		OSTaskSuspend(6); 	//挂起主任务
+#if 0 /* remove audioplay  ,hept, 2017.9.2 */
 		if(audiodev.status&(1<<4))
 		{
 			app_wm8978_volset(0);	 
 			I2S_Play_Stop();//停止音频播放
 		} 
+#endif
 		if(DCMI->CR&0X01)//摄像头正在工作?
 		{
 			dcmiflag=1;
@@ -424,11 +426,13 @@ void phone_incall_task(void *pdata)
 		sim900a_cmd_over();//处理完毕
 		LCD_Clear(BLACK);
 		app_recover_bkcolor(0,0,lcddev.width,lcddev.height,bkcolor);//恢复背景色
+#if 0 /* remove audioplay  ,hept, 2017.9.2 */
 		if(audiodev.status&(1<<4))
 		{
 			I2S_Play_Start();//开启音频播放
 			app_wm8978_volset(wm8978set.mvol);	 
 		} 
+#endif
 		OSTaskResume(6); 		//恢复主任务
 		for(i=0;i<14;i++)btn_delete(p_btn[i]);//删除按钮
 	}  
