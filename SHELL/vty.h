@@ -136,7 +136,7 @@ typedef enum
 	TELNET_PORT
 }DEV_PRINT_PORT;
 
-int InitVty( int option );
+void VtyInit(void);
 
 void InitVtyData( VTY_STRUCT *vty, VTY_TYPE vtyType );
 

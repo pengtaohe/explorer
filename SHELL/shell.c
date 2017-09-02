@@ -276,6 +276,8 @@ void Shell_process(void)
 
 void Shell_init(void)
 {
+	VtyInit();
+	
 	VtyAddUser("user","user",VTY_USER);
 	VtyAddUser("admin","admin",VTY_ADMIN);
 	VtyAddUser("debug","supervisor",VTY_DEBUG);

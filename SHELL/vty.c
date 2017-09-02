@@ -163,4 +163,9 @@ int ConsoleTask( void )
     return VTY_OK;
 }
 
+void VtyInit(void)
+{
+	memset(VtyData, 0, sizeof(VtyData));
+	memset(VtyAccount, 0, sizeof(VtyAccount));
+}
 
