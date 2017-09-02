@@ -2889,7 +2889,8 @@ u32 LCD_Pow(u8 m,u8 n)
 //color:颜色 
 //num:数值(0~4294967295);	 
 void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
-{         	
+{ 
+#if 0  /* print to usart */
 	u8 t,temp;
 	u8 enshow=0;						   
 	for(t=0;t<len;t++)
@@ -2906,6 +2907,9 @@ void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
 		}
 	 	LCD_ShowChar(x+(size/2)*t,y,temp+'0',size,0); 
 	}
+#else
+	printf("%d\r\n", num);
+#endif
 } 
 //显示数字,高位为0,还是显示
 //x,y:起点坐标
@@ -2917,7 +2921,8 @@ void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len,u8 size)
 //[6:1]:保留
 //[0]:0,非叠加显示;1,叠加显示.
 void LCD_ShowxNum(u16 x,u16 y,u32 num,u8 len,u8 size,u8 mode)
-{  
+{ 
+#if 0  /* print to usart */
 	u8 t,temp;
 	u8 enshow=0;						   
 	for(t=0;t<len;t++)
@@ -2935,6 +2940,9 @@ void LCD_ShowxNum(u16 x,u16 y,u32 num,u8 len,u8 size,u8 mode)
 		}
 	 	LCD_ShowChar(x+(size/2)*t,y,temp+'0',size,mode&0X01); 
 	}
+#else
+	printf("%d\r\n", num);
+#endif
 } 
 //显示字符串
 //x,y:起点坐标
@@ -2942,7 +2950,8 @@ void LCD_ShowxNum(u16 x,u16 y,u32 num,u8 len,u8 size,u8 mode)
 //size:字体大小
 //*p:字符串起始地址		  
 void LCD_ShowString(u16 x,u16 y,u16 width,u16 height,u8 size,u8 *p)
-{         
+{
+#if 0  /* print to usart */
 	u8 x0=x;
 	width+=x;
 	height+=y;
@@ -2954,6 +2963,9 @@ void LCD_ShowString(u16 x,u16 y,u16 width,u16 height,u8 size,u8 *p)
         x+=size/2;
         p++;
     }  
+#else
+	printf("%s\r\n", p);
+#endif
 }
 
 

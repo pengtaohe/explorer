@@ -99,8 +99,12 @@ u8 system_exsram_test(u16 x,u16 y,u8 fsize)
 {  
 	u32 i=0;  	  
 	u16 temp=0;	   
-	u16 sval=0;	//在地址0读到的数据	  				   
+	u16 sval=0;	//在地址0读到的数据	  
+#if 0
   	LCD_ShowString(x,y,lcddev.width,y+fsize,fsize,"Ex Memory Test:   0KB"); 
+#else
+	printf("Ex Memory Test:   0KB");
+#endif
 	//每隔1K字节,写入一个数据,总共写入1024个数据,刚好是1M字节
 	for(i=0;i<1024*1024;i+=1024)
 	{
@@ -112,9 +116,17 @@ u8 system_exsram_test(u16 x,u16 y,u8 fsize)
 	{
   		FSMC_SRAM_ReadBuffer((u8*)&temp,i,2);
 		if(i==0)sval=temp;
- 		else if(temp<=sval)break;//后面读出的数据一定要比第一次读到的数据大.	   		   
+ 		else if(temp<=sval)break;//后面读出的数据一定要比第一次读到的数据大.	   
+ #if 0
 		LCD_ShowxNum(x+15*(fsize/2),y,(u16)(temp-sval+1),4,fsize,0);//显示内存容量  
+ #else
+ 		printf("\b\b\b\b\b\b");
+		printf("%4dKB", temp-sval+1);
+ #endif
  	}
+	
+	printf("\r\n");
+	
 	if(i>=1024*1024)
 	{
 		LCD_ShowxNum(x+15*(fsize/2),y,i/1024,4,fsize,0);//显示内存值  		
@@ -256,6 +268,9 @@ REINIT://重新初始化
 	POINT_COLOR=WHITE;
 	BACK_COLOR=BLACK;
 	j=0;   
+
+	delay_ms(5000); /*delay 5s for usart print, by hept*/
+
 /////////////////////////////////////////////////////////////////////////
 //显示版权信息
 	ypos=2;
@@ -495,10 +510,12 @@ REINIT://重新初始化
  	if(app_system_parameter_init())system_error_show(5,ypos+fsize*(j+1),"Parameter Load Error!",fsize);//参数加载
 	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");			   
   	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SYSTEM Starting...");  
+#if 0 /* remove, by hept*/
 	//蜂鸣器短叫,提示正常启动
 	BEEP=1;
 	delay_ms(100);
 	BEEP=0; 
+#endif
 	myfree(SRAMIN,version);	 
 	delay_ms(1500);  
 }   
