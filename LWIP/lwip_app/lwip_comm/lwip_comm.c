@@ -231,7 +231,8 @@ void lwip_dhcp_task(void *pdata)
 			lwipdev.gateway[0]=(uint8_t)(gw);
 			printf("通过DHCP获取到的默认网关..........%d.%d.%d.%d\r\n",lwipdev.gateway[0],lwipdev.gateway[1],lwipdev.gateway[2],lwipdev.gateway[3]);
 			break;
-		}else if(lwip_netif.dhcp->tries>LWIP_MAX_DHCP_TRIES) //通过DHCP服务获取IP地址失败,且超过最大尝试次数
+		}
+		else if(lwip_netif.dhcp->tries>LWIP_MAX_DHCP_TRIES) //通过DHCP服务获取IP地址失败,且超过最大尝试次数
 		{  
 			lwipdev.dhcpstatus=0XFF;//DHCP失败.
 			//使用静态IP地址
@@ -255,7 +256,7 @@ void lwip_dhcp_task(void *pdata)
 void lwip_comm_destroy(void)
 {
 	u8 err;
-#if LWIP_DHCP
+#if 0/*LWIP_DHCP*/ /* dhcp 任务结束时已经删除*/
 	lwip_comm_dhcp_delete();		//dhcp任务删除 
 #endif
 	ETH_DeInit();  					//复位以太网
@@ -328,29 +329,29 @@ void lwip_comm_delete_next_timeout(void)
 	tcpip_tcp_timer_active=0;
 }
 
+/* add for ipaddr set , by hept*/
+void lwip_set_ipaddr(const char* ip)
+{
+	struct ip_addr ipaddr;
+	
+	IP4_ADDR(&ipaddr,ip[0],ip[1],ip[2],ip[3]);
+	netif_set_ipaddr(&lwip_netif, &ipaddr);
+}
 
+void lwip_set_netmask(const char* ip)
+{
+	struct ip_addr netmask;
+	
+	IP4_ADDR(&netmask,ip[0],ip[1],ip[2],ip[3]);
+	netif_set_netmask(&lwip_netif, &netmask);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void lwip_set_gw(const char* ip)
+{
+	struct ip_addr gw;
+	
+	IP4_ADDR(&gw,ip[0],ip[1],ip[2],ip[3]);
+	netif_set_gw(&lwip_netif, &gw);
+}
 
 

@@ -550,8 +550,24 @@ void start_task(void *pdata)
 //主任务
 void main_task(void *pdata)
 {
+	u8 res = 0;
 	u8 selx; 
 	u16 tcnt=0;
+	
+	res=lwip_comm_init();	//lwip初始化 LwIP_Init一定要在OSInit之后和其他LWIP线程创建之前初始化!!!!!!!!
+	if(res==0)				//网卡初始化成功
+	{
+		lwip_comm_dhcp_creat();	//创建DHCP任务
+		httpd_init(); 	//初始化http
+	}
+	else
+	{
+		printf("\r\n%%error: network init failed, errorno:%d.\r\n", res);
+		/*system_task_return=0;*/
+		lwip_comm_destroy(); 
+		LAN8720_RST=0;//保持LAN8720复位状态,减少功耗.
+	}
+	
 	spb_init();			//初始化SPB界面
 	spb_load_mui();		//加载SPB主界面
 	slcd_frame_show(0);	//显示界面
@@ -574,7 +590,7 @@ void main_task(void *pdata)
 			case 10:camera_play();break;	//摄像头
 			//case 11:recorder_play();break;	//录音机
 			//case 12:usb_play();break;		//USB连接
-	    	case 13:net_play();break;		//网络测试
+	    	//case 13:net_play();break;		//网络测试
 			case 14:wireless_play();break;	//无线传书
  			//case 15:calc_play();break;		//计算器   
 			case 16:phone_play();break;		//电话功能
