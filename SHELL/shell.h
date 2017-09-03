@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include "vty.h"
 
+/* support lwip */
+#include "lwip/inet.h"
+
 typedef struct _CMD_TABLE
 {
 	struct _CMD_TABLE *prev;

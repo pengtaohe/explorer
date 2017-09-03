@@ -74,13 +74,112 @@ DefShellCmd( cmdShowMem, "read", funcShowMem, "show memory.", "", NULL, &cmdSetI
 {}
 
 DefShellCmd( cmdSetIP, "setip", funcmdSetIP, "set ip addr.", "", &cmdShowMem, &cmdSetMask )
-{}
+{
+	UINT32 addr;
+	UINT8 ip_addr[4];
+	extern void lwip_set_ipaddr(const char*);
+
+	if( 1 != vty->argc )
+	{
+		printf("argument error\r\n");
+		return;
+	}
+
+	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+	{
+		printf(" eg: setip 192.168.1.1 \r\n");
+		return;
+	}
+	else
+	{
+		addr = inet_addr(vty->argv[0]);
+		if( INADDR_NONE == addr)
+		{
+			printf("IP address is incorrect, please retry\r\n");
+			return;
+		}
+		ip_addr[0] = addr&0xff;		
+		ip_addr[1] = addr>>8&0xff;
+		ip_addr[2] = addr>>16&0xff;
+		ip_addr[3] = addr>>24&0xff;
+
+		lwip_set_ipaddr(ip_addr);
+		
+		return;
+	}
+}
 
 DefShellCmd( cmdSetMask, "setmask", funcmdSetMask, "set subnet mask.", "", &cmdSetIP, &cmdSetGateWay )
-{}
+{
+	UINT32 addr;
+	UINT8 ip_addr[4];
+	extern void lwip_set_netmask(const char*);
+
+	if( 1 != vty->argc )
+	{
+		printf("argument error\r\n");
+		return;
+	}
+
+	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+	{
+		printf(" eg: setmask 192.168.1.1 \r\n");
+		return;
+	}
+	else
+	{
+		addr = inet_addr(vty->argv[0]);
+		if( INADDR_NONE == addr)
+		{
+			printf("IP address is incorrect, please retry\r\n");
+			return;
+		}
+		ip_addr[0] = addr&0xff;		
+		ip_addr[1] = addr>>8&0xff;
+		ip_addr[2] = addr>>16&0xff;
+		ip_addr[3] = addr>>24&0xff;
+
+		lwip_set_netmask(ip_addr);
+		
+		return;
+	}
+}
 
 DefShellCmd( cmdSetGateWay, "setgateway", funcmdSetGateWay, "set gate way.", "", &cmdSetMask, &cmdPing )
-{}
+{
+	UINT32 addr;
+	UINT8 ip_addr[4];
+	extern void lwip_set_gw(const char*);
+
+	if( 1 != vty->argc )
+	{
+		printf("argument error\r\n");
+		return;
+	}
+
+	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+	{
+		printf(" eg: setgateway 192.168.1.1 \r\n");
+		return;
+	}
+	else
+	{
+		addr = inet_addr(vty->argv[0]);
+		if( INADDR_NONE == addr)
+		{
+			printf("IP address is incorrect, please retry\r\n");
+			return;
+		}
+		ip_addr[0] = addr&0xff;		
+		ip_addr[1] = addr>>8&0xff;
+		ip_addr[2] = addr>>16&0xff;
+		ip_addr[3] = addr>>24&0xff;
+
+		lwip_set_gw(ip_addr);
+		
+		return;
+	}
+}
 
 DefShellCmd( cmdPing, "ping", funPing, "send ICMP ECHO_REQUEST to network hosts", "", &cmdSetGateWay, NULL )
 {
