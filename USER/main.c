@@ -553,7 +553,9 @@ void main_task(void *pdata)
 	u8 res = 0;
 	u8 selx; 
 	u16 tcnt=0;
-	
+
+	printf("\r\nStart task \"main\".\r\n");
+		
 	res=lwip_comm_init();	//lwip初始化 LwIP_Init一定要在OSInit之后和其他LWIP线程创建之前初始化!!!!!!!!
 	if(res==0)				//网卡初始化成功
 	{

@@ -198,6 +198,9 @@ void lwip_comm_dhcp_delete(void)
 void lwip_dhcp_task(void *pdata)
 {
 	u32 ip=0,netmask=0,gw=0;
+
+	printf("\r\nStart task \"dhcp\".\r\n");
+	
 	dhcp_start(&lwip_netif);//开启DHCP 
 	lwipdev.dhcpstatus=0;	//正在DHCP
 	printf("正在查找DHCP服务器,请稍等...........\r\n");   
@@ -356,16 +359,8 @@ void lwip_set_gw(const char* ip)
 
 void lwip_get_netcfg(u32* ipaddr, u32* netmask, u32* gateway)
 {
-	struct ip_addr ip;
-	struct ip_addr mask;
-	struct ip_addr gw;
-
-	ip = lwip_netif.ip_addr;
-	mask = lwip_netif.netmask;
-	gw = lwip_netif.gw;
-
-	*ipaddr = ntohl(ip.addr);
-	*netmask = ntohl(mask.addr);
-	*gateway = ntohl(gw.addr);
+	*ipaddr = lwip_netif.ip_addr.addr;
+	*netmask = lwip_netif.netmask.addr;
+	*gateway = lwip_netif.gw.addr;
 }
 

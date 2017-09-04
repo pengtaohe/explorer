@@ -226,12 +226,12 @@ DefShellCmd( cmdShowTask, "showtask", funcmdShowTask, "show task info.", "", &cm
 	}
 	else if( 0 == vty->argc )
 	{
-		printf("TaskName  Priority  Status     StackSize StackUsed \r\n");
+		printf("TaskName         Priority    Status       StackSize   StackUsed  \r\n");
 		for (prio = 0u; prio <= OS_TASK_IDLE_PRIO; prio++)
 		{
 			if(OS_ERR_NONE == OSTaskQuery (prio, &task_data))
 			{
-				printf("%10s%10d%7s\[%2X\]%10d%10d\r\n", 
+				printf("%15s  %10d  %7s\[%2X\]  %10d  %10d  \r\n", 
 					task_data.OSTCBTaskName, 
 					task_data.OSTCBPrio,
 					OS_STAT_RDY==task_data.OSTCBStat?"Ready":(OS_STAT_SUSPEND==task_data.OSTCBStat?"Suspend":"Pend"),
