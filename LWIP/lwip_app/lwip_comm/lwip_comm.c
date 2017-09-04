@@ -354,4 +354,18 @@ void lwip_set_gw(const char* ip)
 	netif_set_gw(&lwip_netif, &gw);
 }
 
+void lwip_get_netcfg(u32* ipaddr, u32* netmask, u32* gateway)
+{
+	struct ip_addr ip;
+	struct ip_addr mask;
+	struct ip_addr gw;
+
+	ip = lwip_netif.ip_addr;
+	mask = lwip_netif.netmask;
+	gw = lwip_netif.gw;
+
+	*ipaddr = ntohl(ip.addr);
+	*netmask = ntohl(mask.addr);
+	*gateway = ntohl(gw.addr);
+}
 

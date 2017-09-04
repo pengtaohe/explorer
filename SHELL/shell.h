@@ -7,8 +7,12 @@
 #include <stdlib.h>
 #include "vty.h"
 
+/* support ucos-ii */
+#include "ucos_ii.h"
+
 /* support lwip */
 #include "lwip/inet.h"
+#include "lwip_comm.h"
 
 typedef struct _CMD_TABLE
 {

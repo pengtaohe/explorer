@@ -12,6 +12,8 @@ extern CMD_TABLE cmdTEST;
 extern CMD_TABLE cmdSetIP;
 extern CMD_TABLE cmdSetMask;
 extern CMD_TABLE cmdSetGateWay;
+extern CMD_TABLE cmdShowNetCfg;
+extern CMD_TABLE cmdShowTask;
 extern CMD_TABLE cmdPing;
 
 /* root 节点 */
@@ -123,7 +125,7 @@ DefShellCmd( cmdSetMask, "setmask", funcmdSetMask, "set subnet mask.", "", &cmdS
 
 	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
 	{
-		printf(" eg: setmask 192.168.1.1 \r\n");
+		printf(" eg: setmask 255.255.255.0 \r\n");
 		return;
 	}
 	else
@@ -145,7 +147,7 @@ DefShellCmd( cmdSetMask, "setmask", funcmdSetMask, "set subnet mask.", "", &cmdS
 	}
 }
 
-DefShellCmd( cmdSetGateWay, "setgateway", funcmdSetGateWay, "set gate way.", "", &cmdSetMask, &cmdPing )
+DefShellCmd( cmdSetGateWay, "setgateway", funcmdSetGateWay, "set gate way.", "", &cmdSetMask, &cmdShowNetCfg )
 {
 	UINT32 addr;
 	UINT8 ip_addr[4];
@@ -181,7 +183,73 @@ DefShellCmd( cmdSetGateWay, "setgateway", funcmdSetGateWay, "set gate way.", "",
 	}
 }
 
-DefShellCmd( cmdPing, "ping", funPing, "send ICMP ECHO_REQUEST to network hosts", "", &cmdSetGateWay, NULL )
+DefShellCmd( cmdShowNetCfg, "shownet", funcmdShowNetCfg, "show network config.", "", &cmdSetGateWay, &cmdShowTask )
+{
+	UINT8 ip_addr[4], net_mask[4], gate_way[4];
+	extern void lwip_get_netcfg(u32* ipaddr, u32* netmask, u32* gateway);
+
+	if( 1 == vty->argc )
+	{
+		if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+		{
+			printf(" eg: shownet \r\n");
+			return;
+		}
+	}
+	else if( 0 == vty->argc )
+	{
+		lwip_get_netcfg((UINT32*)ip_addr, (UINT32*)net_mask, (UINT32*)gate_way);
+		printf("IP   : %d.%d.%d.%d\r\n", ip_addr[0], ip_addr[1], ip_addr[2], ip_addr[3]);
+		printf("MASK : %d.%d.%d.%d\r\n", net_mask[0], net_mask[1], net_mask[2], net_mask[3]);
+		printf("GW   : %d.%d.%d.%d\r\n", gate_way[0], gate_way[1], gate_way[2], gate_way[3]);
+	}
+	else
+	{
+		printf("argument error\r\n");
+	}
+
+	return;
+}
+
+DefShellCmd( cmdShowTask, "showtask", funcmdShowTask, "show task info.", "", &cmdShowNetCfg, &cmdPing )
+{
+	INT8U prio;
+	OS_TCB task_data;
+		
+	if( 1 == vty->argc )
+	{
+		if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+		{
+			printf(" eg: showtask \r\n");
+			return;
+		}
+	}
+	else if( 0 == vty->argc )
+	{
+		printf("TaskName  Priority  Status     StackSize StackUsed \r\n");
+		for (prio = 0u; prio <= OS_TASK_IDLE_PRIO; prio++)
+		{
+			if(OS_ERR_NONE == OSTaskQuery (prio, &task_data))
+			{
+				printf("%10s%10d%7s\[%2X\]%10d%10d\r\n", 
+					task_data.OSTCBTaskName, 
+					task_data.OSTCBPrio,
+					OS_STAT_RDY==task_data.OSTCBStat?"Ready":(OS_STAT_SUSPEND==task_data.OSTCBStat?"Suspend":"Pend"),
+					task_data.OSTCBStat, 
+					task_data.OSTCBStkSize, 
+					task_data.OSTCBStkUsed);
+			}
+		}
+	}
+	else
+	{
+		printf("argument error\r\n");
+	}
+
+	return;
+}
+
+DefShellCmd( cmdPing, "ping", funPing, "send ICMP ECHO_REQUEST to network hosts", "", &cmdShowTask, NULL )
 {
 #if 0
 	UINT32 addr;
@@ -213,10 +281,8 @@ DefShellCmd( cmdPing, "ping", funPing, "send ICMP ECHO_REQUEST to network hosts"
 /* TEST 节点 */
 DefShellCmd( cmdTEST, "test1", funcTEST, "TEST-1", "", NULL, NULL )
 {	
-#if 0
 	printf(" The is a test cmd!\n\r");
 	return;		
-#endif
 }
 
 extern NODE_TABLE node_test;
