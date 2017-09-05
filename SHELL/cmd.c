@@ -13,6 +13,7 @@ extern CMD_TABLE cmdSetIP;
 extern CMD_TABLE cmdSetMask;
 extern CMD_TABLE cmdSetGateWay;
 extern CMD_TABLE cmdShowNetCfg;
+extern CMD_TABLE cmdShowArp;
 extern CMD_TABLE cmdShowTask;
 extern CMD_TABLE cmdPing;
 
@@ -183,7 +184,7 @@ DefShellCmd( cmdSetGateWay, "setgateway", funcmdSetGateWay, "set gate way.", "",
 	}
 }
 
-DefShellCmd( cmdShowNetCfg, "shownet", funcmdShowNetCfg, "show network config.", "", &cmdSetGateWay, &cmdShowTask )
+DefShellCmd( cmdShowNetCfg, "shownet", funcmdShowNetCfg, "show network config.", "", &cmdSetGateWay, &cmdShowArp )
 {
 	UINT8 ip_addr[4], net_mask[4], gate_way[4];
 	extern void lwip_get_netcfg(u32* ipaddr, u32* netmask, u32* gateway);
@@ -211,7 +212,32 @@ DefShellCmd( cmdShowNetCfg, "shownet", funcmdShowNetCfg, "show network config.",
 	return;
 }
 
-DefShellCmd( cmdShowTask, "showtask", funcmdShowTask, "show task info.", "", &cmdShowNetCfg, &cmdPing )
+DefShellCmd( cmdShowArp, "showarp", funcmdShowArp, "show arp entry.", "", &cmdShowNetCfg, &cmdShowTask )
+{
+	extern void lwip_show_arpentry(void);
+
+	if( 1 == vty->argc )
+	{
+		if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+		{
+			printf(" eg: showarp \r\n");
+			return;
+		}
+	}
+	else if( 0 == vty->argc )
+	{
+		lwip_show_arpentry();
+	}
+	else
+	{
+		printf("argument error\r\n");
+	}
+
+	return;
+}
+
+
+DefShellCmd( cmdShowTask, "showtask", funcmdShowTask, "show task info.", "", &cmdShowArp, &cmdPing )
 {
 	INT8U prio;
 	OS_TCB task_data;
@@ -226,12 +252,13 @@ DefShellCmd( cmdShowTask, "showtask", funcmdShowTask, "show task info.", "", &cm
 	}
 	else if( 0 == vty->argc )
 	{
-		printf("TaskName         Priority    Status       StackSize   StackUsed  \r\n");
+		//printf("TaskName         Priority    Status       StackSize   StackUsed  \r\n");
+		printf("%-15s  %-10s  %-11s  %-10s  %-10s  \r\n", "TaskName", "Priority", "Status", "StackSize", "StackUsed");
 		for (prio = 0u; prio <= OS_TASK_IDLE_PRIO; prio++)
 		{
 			if(OS_ERR_NONE == OSTaskQuery (prio, &task_data))
 			{
-				printf("%15s  %10d  %7s\[%2X\]  %10d  %10d  \r\n", 
+				printf("%-15s  %10d  %7s\[%2X\]  %10d  %10d  \r\n", 
 					task_data.OSTCBTaskName, 
 					task_data.OSTCBPrio,
 					OS_STAT_RDY==task_data.OSTCBStat?"Ready":(OS_STAT_SUSPEND==task_data.OSTCBStat?"Suspend":"Pend"),

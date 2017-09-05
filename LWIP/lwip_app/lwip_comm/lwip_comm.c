@@ -364,3 +364,31 @@ void lwip_get_netcfg(u32* ipaddr, u32* netmask, u32* gateway)
 	*gateway = lwip_netif.gw.addr;
 }
 
+void lwip_show_arpentry(void)
+{
+#if 0 /* data struct of arp entry is private for lwip */
+	u8 i;
+	u8 ethaddr_str[18];
+
+	printf("%-22s%-22s%-10s\r\n", "Internet Address", "Physical Address", "Type");
+	for(i = 0; i < ARP_TABLE_SIZE; i ++)
+	{
+		if(ETHARP_STATE_EMPTY != arp_table[i].state)
+		{
+			sprintf(ethaddr_str, "%2x-%2x-%2x-%2x-%2x-%2x", 
+				arp_table[i].ethaddr.addr[0], 
+				arp_table[i].ethaddr.addr[1], 
+				arp_table[i].ethaddr.addr[2], 
+				arp_table[i].ethaddr.addr[3], 
+				arp_table[i].ethaddr.addr[4],
+				arp_table[i].ethaddr.addr[5]);
+			
+			printf("%-22s%-22s%-10s\r\n", 
+				inet_ntoa(arp_table[i].ipaddr), 
+				ethaddr_str, 
+				ETHARP_STATE_STATIC==arp_table[i].state?"static":"dynamic");
+		}
+	}
+#endif
+}
+
