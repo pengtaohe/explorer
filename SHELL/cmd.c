@@ -263,7 +263,7 @@ DefShellCmd( cmdShowTask, "showtask", funcmdShowTask, "show task info.", "", &cm
 					task_data.OSTCBPrio,
 					OS_STAT_RDY==task_data.OSTCBStat?"Ready":(OS_STAT_SUSPEND==task_data.OSTCBStat?"Suspend":"Pend"),
 					task_data.OSTCBStat, 
-					task_data.OSTCBStkSize, 
+					task_data.OSTCBStkSize*sizeof(OS_STK), 
 					task_data.OSTCBStkUsed);
 			}
 		}
