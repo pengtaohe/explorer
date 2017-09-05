@@ -594,11 +594,6 @@
               <FilePath>..\HARDWARE\MPU6050\eMPL\inv_mpu_dmp_motion_driver.c</FilePath>
             </File>
             <File>
-              <FileName>24l01.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\NRF24L01\24l01.c</FilePath>
-            </File>
-            <File>
               <FileName>remote.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\REMOTE\remote.c</FilePath>
@@ -787,11 +782,6 @@
               <FileName>netplay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\APP\netplay.c</FilePath>
-            </File>
-            <File>
-              <FileName>wirelessplay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\APP\wirelessplay.c</FilePath>
             </File>
             <File>
               <FileName>phoneplay.c</FileName>
