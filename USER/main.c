@@ -731,7 +731,7 @@ void shell_task(void *pdata)
 	while(1)
 	{
 		Shell_process();
-		delay_ms(1);
+		delay_ms(1000/OS_TICKS_PER_SEC); /* delay no less than one tick to trigger OS_Sched , by hept*/
 	}
 }
 #endif
