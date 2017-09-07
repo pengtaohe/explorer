@@ -521,7 +521,15 @@ REINIT://重新初始化
 }   
 //main函数	  					
 int main(void)
-{ 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
+{ 	
+	  /* Configure the Vector Table location add offset address ------------------*/
+#ifdef VECT_TAB_SRAM
+	SCB->VTOR = SRAM_BASE | 0x1000; /* Vector Table Relocation in Internal SRAM */
+#else
+	SCB->VTOR = FLASH_BASE | 0x10000; /* Vector Table Relocation in Internal FLASH */
+#endif
+
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
    	system_init();		//系统初始化 
  	OSInit();   
  	OSTaskCreate(start_task,(void *)0,(OS_STK *)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO );//创建起始任务

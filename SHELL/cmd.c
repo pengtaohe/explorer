@@ -20,7 +20,7 @@ extern CMD_TABLE cmdPing;
 /* root ½Úµã */
 DefShellCmd( cmdVersion, "ver", funcVersion, "show app version.", "", NULL, &cmdSetBaud ) 
 {
-	printf("\r\nversion: V01R10C01B001\r\n");
+	printf("\r\nversion: V01R01C01B001\r\n");
 }	
 
 DefShellCmd( cmdSetBaud, "setbaud", funcSetBaud, "set baud rate", "setbaud rate\n\rParameter: 9600|19200|38400|57600|115200", &cmdVersion, &cmdReset )
