@@ -2,12 +2,16 @@
 
 #define ROOT       "\rroot"
 #define DEBUG      "debug"
-#define TEST	   "test"
+
+char FatfsNodeName[255] = "fatfs";
+#define FATFS	   FatfsNodeName
 
 extern CMD_TABLE cmdSetBaud;
 extern CMD_TABLE cmdReset;
 
-extern CMD_TABLE cmdTEST;
+extern CMD_TABLE cmdShowDisk;
+extern CMD_TABLE cmdCd;
+extern CMD_TABLE cmdLl;
 
 extern CMD_TABLE cmdSetIP;
 extern CMD_TABLE cmdSetMask;
@@ -305,18 +309,47 @@ DefShellCmd( cmdPing, "ping", funPing, "send ICMP ECHO_REQUEST to network hosts"
 #endif
 }
 
-/* TEST ½Úµã */
-DefShellCmd( cmdTEST, "test1", funcTEST, "TEST-1", "", NULL, NULL )
+/* fatfs */
+DefShellCmd( cmdShowDisk, "showdisk", funcShowDisk, "show mounted disk.", "", NULL, &cmdCd )
+{
+	fatfs_showdisk();
+	return;
+}
+
+extern char g_CurrentDir[];
+DefShellCmd( cmdCd, "cd", funcCd, "change dir.", "", &cmdShowDisk, &cmdLl )
+{
+	if( 1 != vty->argc )
+	{
+		printf("argument error\r\n");
+		return;
+	}
+
+	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+	{
+		printf(" eg: cd [dirname] \r\n");
+		return;
+	}
+	else
+	{
+		fatfs_cd(vty->argv[0]);
+		strcpy(FatfsNodeName, g_CurrentDir);
+	}
+
+	return;
+}
+
+DefShellCmd( cmdLl, "ll", funcLL, "list dir", "", &cmdCd, NULL )
 {	
-	printf(" The is a test cmd!\n\r");
+	fatfs_ll(NULL);
 	return;		
 }
 
-extern NODE_TABLE node_test;
+extern NODE_TABLE node_fatfs;
 extern NODE_TABLE node_debug;
 extern NODE_TABLE node_Root;
 
-NODE_TABLE node_test = { NULL, &node_debug, NULL, NULL, &cmdTEST, TEST };
-NODE_TABLE node_debug = { &node_test, &node_Root, NULL, NULL, &cmdShowMem, DEBUG };
+NODE_TABLE node_fatfs = { NULL, &node_debug, NULL, NULL, &cmdShowDisk, FATFS };
+NODE_TABLE node_debug = { &node_fatfs, &node_Root, NULL, NULL, &cmdShowMem, DEBUG };
 NODE_TABLE node_Root = { &node_debug,NULL,NULL,NULL,&cmdVersion, ROOT };
 

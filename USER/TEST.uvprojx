@@ -678,6 +678,11 @@
               <FileType>1</FileType>
               <FilePath>..\FATFS\exfuns\mycc936.c</FilePath>
             </File>
+            <File>
+              <FileName>ffshell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FATFS\exfuns\ffshell.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

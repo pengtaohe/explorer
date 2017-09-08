@@ -150,47 +150,7 @@ void system_error_show(u16 x,u16 y,u8*err,u8 fsize)
 		LED0=!LED0;
 	} 
 }
-//擦除整个SPI FLASH(即所有资源都删除),以快速更新系统.
-//x,y:坐标
-//fsize:字体大小
-//x,y:坐标.err:错误信息
-//返回值:0,没有擦除;1,擦除了
-u8 system_files_erase(u16 x,u16 y,u8 fsize)
-{
-	u8 key;
-	u8 t=0;
-	POINT_COLOR=RED;
-	LCD_ShowString(x,y,lcddev.width,lcddev.height,fsize,"Erase all system files?");
-	while(1)
-	{
-		t++;
-		if(t==20)LCD_ShowString(x,y+fsize,lcddev.width,lcddev.height,fsize,"KEY0:NO / KEY2:YES");
-		if(t==40)
-		{
-			gui_fill_rectangle(x,y+fsize,lcddev.width,fsize,BLACK);//清除显示
-			t=0;
-			LED0=!LED0;
-		}
-		key=KEY_Scan(0);
-		if(key==KEY0_PRES)//不擦除,用户取消了
-		{ 
-			gui_fill_rectangle(x,y,lcddev.width,fsize*2,BLACK);//清除显示
-			POINT_COLOR=WHITE;
-			LED0=1;
-			return 0;
-		}
-		if(key==KEY2_PRES)//要擦除,要重新来过
-		{
-			LED0=1;
-			LCD_ShowString(x,y+fsize,lcddev.width,lcddev.height,fsize,"Erasing SPI FLASH...");
-			W25QXX_Erase_Chip();
-			LCD_ShowString(x,y+fsize,lcddev.width,lcddev.height,fsize,"Erasing SPI FLASH OK");
-			delay_ms(600);
-			return 1;
-		}
-		delay_ms(10);
-	}
-}
+
 //字库更新确认提示.
 //x,y:坐标
 //fsize:字体大小 
@@ -315,21 +275,7 @@ REINIT://重新初始化
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,"OK");			 
 	my_mem_init(SRAMEX);		//初始化外部内存池,必须放在内存检测之后
 	LED0=1;LED1=1;//同时关闭两个LED
-	
-	if(W25QXX_ReadID()!=W25Q128)//检测不到W25Q128
-	{	 
-		system_error_show(5,ypos+fsize*j++,"Ex Flash Error!!",fsize); 
-	}else temp=16*1024;//16M字节大小
-	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Ex Flash:     KB");			   
-	LCD_ShowxNum(5+9*(fsize/2),ypos+fsize*j,temp,5,fsize,0);//显示flash大小  
-	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");   
-	//检测是否需要擦除SPI FLASH?
-	res=KEY_Scan(1);//
-	if(res==KEY2_PRES)
-	{
-		res=system_files_erase(5,ypos+fsize*j,fsize);
-		if(res)goto REINIT; 
-	}
+
     //RTC检测
   	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "RTC Check...");			   
  	if(My_RTC_Init())system_error_show(5,ypos+fsize*(j+1),"RTC Error!",fsize);//RTC检测
@@ -339,33 +285,22 @@ REINIT://重新初始化
 		calendar_get_date(&calendar);//得到当前日期
 		LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");			   
 	}
-	//检查SPI FLASH的文件系统
+	//文件系统挂载
 	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "FATFS Check...");//FATFS检测			   
   	f_mount(fs[0],"0:",1); 		//挂载SD卡  
   	f_mount(fs[1],"1:",1); 		//挂载挂载FLASH. 
- 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");			   
-	//SD卡检测
-	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SD Card:     MB");//FATFS检测
-	temp=0;	
- 	do
-	{
-		temp++;
- 		res=exf_getfree("0:",&dtsize,&dfsize);//得到SD卡剩余容量和总容量
-		delay_ms(200);		   
-	}while(res&&temp<5);//连续检测5次
- 	if(res==0)//得到容量正常
-	{ 
-		gui_phy.memdevflag|=1<<0;	//设置SD卡在位.
-		temp=dtsize>>10;//单位转换为MB
-		stastr="OK";
- 	}else 
-	{
- 		temp=0;//出错了,单位为0
-		stastr="ERROR";
-	}
- 	LCD_ShowxNum(5+8*(fsize/2),ypos+fsize*j,temp,5,fsize,0);					//显示SD卡容量大小
-	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,stastr);	//SD卡状态			   
-	//W25Q128检测,如果不存在文件系统,则先创建.
+ 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");	
+#if 1
+	//W25Q128 在位检测
+	if(W25QXX_ReadID()!=W25Q128)//检测不到W25Q128
+	{	 
+		system_error_show(5,ypos+fsize*j++,"Ex Flash Error!!",fsize); 
+	}else temp=16*1024;//16M字节大小
+	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Ex Flash:     KB");			   
+	LCD_ShowxNum(5+9*(fsize/2),ypos+fsize*j,temp,5,fsize,0);//显示flash大小  
+	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");  
+
+	//W25Q128 文件系统检测，如果不存在文件系统,则先创建.
 	temp=0;	
  	do
 	{
@@ -392,6 +327,33 @@ REINIT://重新初始化
  	}else system_error_show(5,ypos+fsize*(j+1),"Flash Fat Error!",fsize);	//flash 文件系统错误 
  	LCD_ShowxNum(5+11*(fsize/2),ypos+fsize*j,temp,5,fsize,0);						//显示FLASH容量大小
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,"OK");			//FLASH卡状态	
+#endif
+
+#if 0
+	//SD卡检测
+	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SD Card:     MB");//FATFS检测
+	temp=0;	
+ 	do
+	{
+		temp++;
+ 		res=exf_getfree("0:",&dtsize,&dfsize);//得到SD卡剩余容量和总容量
+		delay_ms(200);		   
+	}while(res&&temp<5);//连续检测5次
+ 	if(res==0)//得到容量正常
+	{ 
+		gui_phy.memdevflag|=1<<0;	//设置SD卡在位.
+		temp=dtsize>>10;//单位转换为MB
+		stastr="OK";
+ 	}else 
+	{
+ 		temp=0;//出错了,单位为0
+		stastr="ERROR";
+	}
+ 	LCD_ShowxNum(5+8*(fsize/2),ypos+fsize*j,temp,5,fsize,0);					//显示SD卡容量大小
+	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,stastr);	//SD卡状态	
+#endif
+
+#if 0
 	//U盘检测
 	usbapp_mode_set(0);												//设置为U盘模式
 	temp=0; 
@@ -421,6 +383,8 @@ REINIT://重新初始化
 	}
  	LCD_ShowxNum(5+7*(fsize/2),ypos+fsize*j,temp,5,fsize,0);					//显示U盘容量大小
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,stastr);	//U盘状态	
+#endif
+
 	//TPAD检测		 
  	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "TPAD Check...");			   
  	if(TPAD_Init(8))system_error_show(5,ypos+fsize*(j+1),"TPAD Error!",fsize);//触摸按键检测
@@ -510,7 +474,7 @@ REINIT://重新初始化
  	if(app_system_parameter_init())system_error_show(5,ypos+fsize*(j+1),"Parameter Load Error!",fsize);//参数加载
 	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");			   
   	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SYSTEM Starting...");  
-#if 0 /* remove, by hept*/
+#if 0
 	//蜂鸣器短叫,提示正常启动
 	BEEP=1;
 	delay_ms(100);
@@ -518,7 +482,8 @@ REINIT://重新初始化
 #endif
 	myfree(SRAMIN,version);	 
 	delay_ms(1500);  
-}   
+} 
+
 //main函数	  					
 int main(void)
 { 	
