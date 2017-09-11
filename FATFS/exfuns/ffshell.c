@@ -10,25 +10,57 @@
 
 #include "ffshell.h"
 
-char g_CurrentDir[255] = "\0";
+char g_CurrentDir[255] = "1:";
+
+void fatfs_prompt(void)
+{
+	printf("%s>", g_CurrentDir);
+}
 
 void fatfs_showdisk(void)
 {
 	printf("0:  SD_Card\r\n");
-	printf("1:  Flash)\r\n");
+	printf("1:  Flash\r\n");
 	printf("2:  USB_Disk\r\n");
 }
 
 void fatfs_cd(const char* path)
 {
-	strcpy(&g_CurrentDir[strlen(g_CurrentDir)], path);
+	char n;
+
+	if(!strncmp(path, "./", 2)) /* sub dir of current */
+	{
+		strcpy(&g_CurrentDir[strlen(g_CurrentDir)], path + 1);
+	}
+	else if(!strncmp(path, "..", 2)) /* parent dir of current */
+	{
+		n = strlen(g_CurrentDir);
+		while(n--)
+		{
+			if('/' == g_CurrentDir[n])
+			{
+				g_CurrentDir[n] = '\0';
+				break;
+			}
+		}
+		/*
+		p = strrstr(g_CurrentDir, "/");
+		if(p)
+		{
+			*p = '\0';
+		}
+		*/	
+	}
+	else /* absolute path */
+	{
+		strcpy(g_CurrentDir, path);
+	}
 }
 
 void fatfs_ll(const char* path)
 {
 	DIR dir;
 	FILINFO fileinfo;
-	WORD findex;
 
 	if(NULL == path)
 	{
@@ -41,20 +73,14 @@ void fatfs_ll(const char* path)
 		return;
 	}
 
-	findex = dir.index;
-
 	while(FR_OK == f_readdir(&dir, &fileinfo))
 	{
-
+		if(0 == fileinfo.fname[0]) break;
+		
 		printf("%4s %8d %-s\r\n",
 			fileinfo.fattrib & (1 << 4) ? "Dir" : "File",
 			fileinfo.fsize,
 			*fileinfo.lfname ? fileinfo.lfname : fileinfo.fname);
-
-		if(dir.index == findex)
-		{
-			break;
-		}
 	}
 
 	f_closedir(&dir);

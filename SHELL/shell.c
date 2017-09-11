@@ -261,9 +261,16 @@ void Exec_cmd( VTY_STRUCT *vty, char *cmd )
 	
 	if( vty->state == VTY_STATE_READY )
 	{
-		//print_string( "%s>",pActiveNode->nameText );
-		sprintf( buf_print, "%s>", pActiveNode->nameText );
-		print_string( buf_print );
+		if(!strcmp( "fatfs", pActiveNode->nameText ))
+		{
+			extern void fatfs_prompt(void);
+			fatfs_prompt();
+		}
+		else
+		{
+			sprintf( buf_print, "%s>", pActiveNode->nameText );
+			print_string( buf_print );
+		}
 		vty->curShellNode = ( void *)pActiveNode;
 	}
 	else vty->curShellNode = ( void *)&node_Root;

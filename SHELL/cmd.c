@@ -2,9 +2,7 @@
 
 #define ROOT       "\rroot"
 #define DEBUG      "debug"
-
-char FatfsNodeName[255] = "fatfs";
-#define FATFS	   FatfsNodeName
+#define FATFS	   "fatfs"
 
 extern CMD_TABLE cmdSetBaud;
 extern CMD_TABLE cmdReset;
@@ -316,7 +314,6 @@ DefShellCmd( cmdShowDisk, "showdisk", funcShowDisk, "show mounted disk.", "", NU
 	return;
 }
 
-extern char g_CurrentDir[];
 DefShellCmd( cmdCd, "cd", funcCd, "change dir.", "", &cmdShowDisk, &cmdLl )
 {
 	if( 1 != vty->argc )
@@ -333,7 +330,6 @@ DefShellCmd( cmdCd, "cd", funcCd, "change dir.", "", &cmdShowDisk, &cmdLl )
 	else
 	{
 		fatfs_cd(vty->argv[0]);
-		strcpy(FatfsNodeName, g_CurrentDir);
 	}
 
 	return;
