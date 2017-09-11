@@ -33,12 +33,12 @@
 #define EX_FLASH 1			//外部flash,卷标为1
 #define USB_DISK 2			//U盘,卷标为2
 
-#define FLASH_SECTOR_SIZE 	512		//W25Q128扇区大小为512字节
-#define FLASH_SECTOR_NUM    2048*12	//W25Q128用于FATFS管理的扇区数量,前12M字节给FATFS占用
+#define FLASH_SECTOR_SIZE 	4096 /*512*/		//W25Q128扇区大小为512字节
+#define FLASH_SECTOR_NUM    256*12 /*2048*12*/	//W25Q128用于FATFS管理的扇区数量,前12M字节给FATFS占用
 //对于W25Q128
 //前12M字节给fatfs用,12M字节后,用于存放字库,字库占用3.09M.	15.10M字节以后,给客户自己用	 			    
 u16 FLASH_SECTOR_COUNT;				//W25Q128扇区数量
-#define FLASH_BLOCK_SIZE   	8  		//每个BLOCK有8个扇区
+#define FLASH_BLOCK_SIZE   	16/*8*/  		//每个BLOCK有8个扇区
 
 
 //初始化磁盘

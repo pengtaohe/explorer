@@ -10,6 +10,7 @@ extern CMD_TABLE cmdReset;
 extern CMD_TABLE cmdShowDisk;
 extern CMD_TABLE cmdCd;
 extern CMD_TABLE cmdLl;
+extern CMD_TABLE cmdFormat;
 
 extern CMD_TABLE cmdSetIP;
 extern CMD_TABLE cmdSetMask;
@@ -53,24 +54,20 @@ DefShellCmd( cmdSetBaud, "setbaud", funcSetBaud, "set baud rate", "setbaud rate\
 #endif
 }
 
-DefShellCmd( cmdReset, "reset", funcReset, "reset. ", "", &cmdSetBaud, NULL )
+DefShellCmd( cmdReset, "reset", funcReset, "reset.", "", &cmdSetBaud, NULL )
 {
-#if 0
-	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+	#define BOOT_START_ADDR	0x08000000
+	void (*jump2boot)(void) = (void (*)(void))*(vu32*)(BOOT_START_ADDR + 4);
+	
+	if(0 != vty->argc)
 	{
-	    printf("reset local.\n\r");
+		printf("argument error\r\n");
 		return;
 	}
-	else if( (vty->argc == 0 )||(strcmp(vty->argv[0],"local")==0)  )
-	{
-		printf("\n\rReset System...\n");
-		reset_device();
-	}   
-	else
-	{
-		printf( "Parameter error!reset local.\n\r" );
-	}
-#endif
+
+	printf("start reset the system ...\r\n\r\n");
+	MSR_MSP(*(vu32*)BOOT_START_ADDR);  /* init top of stack */
+	jump2boot(); /* jump to boot */
 }
 
 
@@ -335,9 +332,33 @@ DefShellCmd( cmdCd, "cd", funcCd, "change dir.", "", &cmdShowDisk, &cmdLl )
 	return;
 }
 
-DefShellCmd( cmdLl, "ll", funcLL, "list dir", "", &cmdCd, NULL )
+DefShellCmd( cmdLl, "ll", funcLL, "list dir", "", &cmdCd, &cmdFormat )
 {	
 	fatfs_ll(NULL);
+	return;		
+}
+
+DefShellCmd( cmdFormat, "format", funcFormat, "format disk", "", &cmdLl, NULL )
+{
+	if(1 != vty->argc)
+	{
+		printf("argument error\r\n");
+		return;
+	}
+
+	if((strcmp(vty->argv[0],"?") == 0 )||(strcmp(vty->argv[0],"help") == 0 ))
+	{
+		printf(" eg: format [sdcard|flash|usbdisk] \r\n");
+		return;
+	}
+
+	if(!strcmp(vty->argv[0], "flash"))
+	{
+		fatfs_format();
+	}
+	else
+	{}
+	
 	return;		
 }
 

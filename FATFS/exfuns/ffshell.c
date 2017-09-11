@@ -86,3 +86,22 @@ void fatfs_ll(const char* path)
 	f_closedir(&dir);
 }
 
+void fatfs_format(void)
+{
+	FRESULT res;
+	
+	printf("Flash Disk Formatting...");
+	res=f_mkfs("1:",1,4096);
+	if(res==0)
+	{
+		printf("OK\r\n");
+		f_setlabel((const TCHAR *)"1:flash");
+	}
+	else
+	{
+		printf("Error.%2X\r\n", res);
+	}
+
+	fatfs_cd("1:");
+}
+
