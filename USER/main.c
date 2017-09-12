@@ -129,7 +129,7 @@ u8 system_exsram_test(u16 x,u16 y,u8 fsize)
 	
 	if(i>=1024*1024)
 	{
-		LCD_ShowxNum(x+15*(fsize/2),y,i/1024,4,fsize,0);//显示内存值  		
+		//LCD_ShowxNum(x+15*(fsize/2),y,i/1024,4,fsize,0);//显示内存值  		
 		return 0;//内存正常,成功
 	}
 	return 1;//失败
@@ -231,6 +231,7 @@ REINIT://重新初始化
 
 	delay_ms(5000); /*delay 5s for usart print, by hept*/
 
+#if 0
 /////////////////////////////////////////////////////////////////////////
 //显示版权信息
 	ypos=2;
@@ -264,19 +265,34 @@ REINIT://重新初始化
 	LCD_ShowString(5,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,version);
 	sprintf((char*)verbuf,"LCD ID:%04X",lcddev.id);		//LCD ID打印到verbuf里面
 	LCD_ShowString(5,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, verbuf);	//显示LCD ID 
+#endif
+	
 //////////////////////////////////////////////////////////////////////////
 //开始硬件检测初始化
 	WM8978_Init();			//防止喇叭乱叫
 	app_wm8978_volset(0);	//关闭音量输出
 	LED0=0;LED1=0;//同时点亮两个LED
+#if 0
 	LCD_ShowString(5,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "CPU:STM32F407ZGT6 168Mhz");
 	LCD_ShowString(5,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "FLASH:1024KB  SRAM:192KB");	
 	if(system_exsram_test(5,ypos+fsize*j,fsize))system_error_show(5,ypos+fsize*j++,"EX Memory Error!",fsize);
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,"OK");			 
 	my_mem_init(SRAMEX);		//初始化外部内存池,必须放在内存检测之后
+#else
+	printf("CPU:STM32F407ZGT6 168Mhz\r\n");
+	printf("FLASH:1024KB  SRAM:192KB\r\n");
+
+	//extern SRAM Check
+	if(system_exsram_test(0,0,0))
+	{
+		printf("EX Memory Error!\r\n");
+	}
+	my_mem_init(SRAMEX);
+#endif
 	LED0=1;LED1=1;//同时关闭两个LED
 
     //RTC检测
+#if 0
   	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "RTC Check...");			   
  	if(My_RTC_Init())system_error_show(5,ypos+fsize*(j+1),"RTC Error!",fsize);//RTC检测
 	else 
@@ -285,21 +301,48 @@ REINIT://重新初始化
 		calendar_get_date(&calendar);//得到当前日期
 		LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");			   
 	}
+#else
+	printf("RTC Check...");
+	if(My_RTC_Init())
+	{
+		printf("Error\r\n");
+	}
+	else
+	{
+		printf("Ok\r\n");
+	}
+#endif
 	//文件系统挂载
+#if 0
 	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "FATFS Check...");//FATFS检测			   
   	f_mount(fs[0],"0:",1); 		//挂载SD卡  
   	f_mount(fs[1],"1:",1); 		//挂载挂载FLASH. 
  	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");	
+#else
+	printf("FATFS Check...");
+	f_mount(fs[1],"1:",1);
+	printf("OK\r\n");
+#endif
 #if 1
 	//W25Q128 在位检测
-	if(W25QXX_ReadID()!=W25Q128)//检测不到W25Q128
+#if 0
+	if(W25QXX_ReadID() != W25Q128)//检测不到W25Q128
 	{	 
 		system_error_show(5,ypos+fsize*j++,"Ex Flash Error!!",fsize); 
 	}else temp=16*1024;//16M字节大小
 	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Ex Flash:     KB");			   
 	LCD_ShowxNum(5+9*(fsize/2),ypos+fsize*j,temp,5,fsize,0);//显示flash大小  
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");  
-
+#else
+	if(W25QXX_ReadID() != W25Q128)
+	{
+		printf("Ex Flash Error!\r\n");
+	}
+	else
+	{
+		printf("Ex Flash: %8dKB\r\n", 16*1024);
+	}
+#endif
 	//W25Q128 文件系统检测，如果不存在文件系统,则先创建.
 	temp=0;	
  	do
@@ -310,25 +353,24 @@ REINIT://重新初始化
 	}while(res&&temp<20);//连续检测20次		  
 	if(res==0X0D)//文件系统不存在
 	{
-		LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Flash Disk Formatting...");	//格式化FLASH
+		printf("Flash Disk Formatting...");
 		res=f_mkfs("1:",1,4096);//格式化FLASH,1,盘符;1,不需要引导区,8个扇区为1个簇
 		if(res==0)
 		{
-			f_setlabel((const TCHAR *)"1:ALIENTEK");				//设置Flash磁盘的名字为：ALIENTEK
-			LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");//标志格式化成功
+			f_setlabel((const TCHAR *)"1:flash");				//设置Flash磁盘的名字为：ALIENTEK
+			printf("OK\r\n");
  			res=exf_getfree("1:",&dtsize,&dfsize);//重新获取容量
 		}
 	}   
 	if(res==0)//得到FLASH卡剩余容量和总容量
 	{
-		gui_phy.memdevflag|=1<<1;	//设置SPI FLASH在位.
-		LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Flash Disk:     KB");//FATFS检测			   
-		temp=dtsize; 	   
- 	}else system_error_show(5,ypos+fsize*(j+1),"Flash Fat Error!",fsize);	//flash 文件系统错误 
- 	LCD_ShowxNum(5+11*(fsize/2),ypos+fsize*j,temp,5,fsize,0);						//显示FLASH容量大小
-	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,"OK");			//FLASH卡状态	
+		printf("Flash Disk: %8dKB\r\n", dtsize);
+ 	}
+	else
+	{
+		printf("Flash Fatfs Error\r\n");
+	}
 #endif
-
 #if 0
 	//SD卡检测
 	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SD Card:     MB");//FATFS检测
@@ -352,7 +394,6 @@ REINIT://重新初始化
  	LCD_ShowxNum(5+8*(fsize/2),ypos+fsize*j,temp,5,fsize,0);					//显示SD卡容量大小
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,stastr);	//SD卡状态	
 #endif
-
 #if 0
 	//U盘检测
 	usbapp_mode_set(0);												//设置为U盘模式
@@ -385,19 +426,56 @@ REINIT://重新初始化
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize,stastr);	//U盘状态	
 #endif
 
-	//TPAD检测		 
+	//TPAD检测	
+#if 0
  	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "TPAD Check...");			   
  	if(TPAD_Init(8))system_error_show(5,ypos+fsize*(j+1),"TPAD Error!",fsize);//触摸按键检测
-	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK"); 
+	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");
+#else
+	printf("TPAD Check...");
+	if(TPAD_Init(8))
+	{
+		printf("Error\r\n");
+	}
+	else
+	{
+		printf("Ok\r\n");
+	}
+#endif
 	//MPU6050检测   
+#if 0
 	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "MPU6050 Check...");			   
  	if(MPU_Init())system_error_show(5,ypos+fsize*(j+1),"MPU6050 Error!",fsize);//ADXL345检测
 	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK"); 
+#else
+	printf("MPU6050 Check...");
+	if(MPU_Init())
+	{
+		printf("Error\r\n");
+	}
+	else
+	{
+		printf("Ok\r\n");
+	}
+#endif
 	//24C02检测
+#if 0
    	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "24C02 Check...");			   
  	if(AT24CXX_Check())system_error_show(5,ypos+fsize*(j+1),"24C02 Error!",fsize);//24C02检测
-	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");  
-  	//WM8978检测			   
+	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK"); 
+#else
+	printf("24C02 Check...");
+	if(AT24CXX_Check())
+	{
+		printf("Error\r\n");
+	}
+	else
+	{
+		printf("Ok\r\n");
+	}
+#endif
+  	//WM8978检测	
+#if 0
  	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "WM8978 Check...");			   
  	if(WM8978_Init())system_error_show(5,ypos+fsize*(j+1),"WM8978 Error!",fsize);//WM8978检测
 	else 
@@ -405,7 +483,20 @@ REINIT://重新初始化
 		LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");	
 		app_wm8978_volset(0);				//关闭WM8978音量输出		    		   
   	}
-	//字库检测									    
+#else
+	printf("WM8978 Check...");
+	if(WM8978_Init())
+	{
+		printf("Error\r\n");
+	}
+	else
+	{
+		printf("Ok\r\n");
+		app_wm8978_volset(0);
+	}
+#endif
+	//字库检测	
+#if 0
    	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Font Check...");
 	res=KEY_Scan(1);//检测按键			   
 	if(res==KEY1_PRES)//更新？确认
@@ -428,7 +519,9 @@ REINIT://重新初始化
     	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Font Check...");			   
  	} 
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");//字库检测OK
+#endif
 	//系统文件检测
+#if 0
    	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SYSTEM Files Check...");			   
  	while(app_system_file_check("1"))//系统文件检测
 	{
@@ -459,7 +552,9 @@ REINIT://重新初始化
 		}else break;	
 	}
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");	
+#endif
  	//触摸屏检测 
+#if 0
 	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "Touch Check...");			   
 	res=KEY_Scan(1);//检测按键			   
 	if(TP_Init()||(res==KEY0_PRES&&(tp_dev.touchtype&0X80)==0))//有更新/按下了KEY0且不是电容屏,执行校准 	
@@ -469,11 +564,14 @@ REINIT://重新初始化
 		goto REINIT;				//重新开始初始化
 	}
 	LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");//触摸屏检测OK
-   	//系统参数加载			   
+#endif
+   	//系统参数加载		
+#if 0
  	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SYSTEM Parameter Load...");			   
  	if(app_system_parameter_init())system_error_show(5,ypos+fsize*(j+1),"Parameter Load Error!",fsize);//参数加载
 	else LCD_ShowString(5+okoffset,ypos+fsize*j++,lcddev.width,lcddev.height,fsize, "OK");			   
-  	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SYSTEM Starting...");  
+  	LCD_ShowString(5,ypos+fsize*j,lcddev.width,lcddev.height,fsize, "SYSTEM Starting..."); 
+#endif
 #if 0
 	//蜂鸣器短叫,提示正常启动
 	BEEP=1;
@@ -510,9 +608,11 @@ void start_task(void *pdata)
  	app_srand(OSTime);
 //  	audiombox=OSMboxCreate((void*) 0);	//创建邮箱
 	OS_ENTER_CRITICAL();//进入临界区(无法被中断打断)    
- 	OSTaskCreate(main_task,(void *)0,(OS_STK*)&MAIN_TASK_STK[MAIN_STK_SIZE-1],MAIN_TASK_PRIO);						   
+ 	OSTaskCreate(main_task,(void *)0,(OS_STK*)&MAIN_TASK_STK[MAIN_STK_SIZE-1],MAIN_TASK_PRIO);
+#if 0
  	OSTaskCreate(usart_task,(void *)0,(OS_STK*)&USART_TASK_STK[USART_STK_SIZE-1],USART_TASK_PRIO);						   
 	OSTaskCreate(watch_task,(void *)0,(OS_STK*)&WATCH_TASK_STK[WATCH_STK_SIZE-1],WATCH_TASK_PRIO); 
+#endif
 #ifdef MODULE_SHELL
 	OSTaskCreate(shell_task,(void *)0,(OS_STK*)&SHELL_TASK_STK[SHELL_STK_SIZE-1],SHELL_TASK_PRIO);
 #endif
@@ -541,7 +641,7 @@ void main_task(void *pdata)
 		lwip_comm_destroy(); 
 		LAN8720_RST=0;//保持LAN8720复位状态,减少功耗.
 	}
-	
+#if 0	
 	spb_init();			//初始化SPB界面
 	spb_load_mui();		//加载SPB主界面
 	slcd_frame_show(0);	//显示界面
@@ -581,6 +681,12 @@ void main_task(void *pdata)
 			spb_stabar_msg_show(0);//更新状态栏信息
 		}
 	}
+#else
+	while(1)
+	{
+		delay_ms(1000/OS_TICKS_PER_SEC);
+	}
+#endif
 } 
 //执行最不需要时效性的代码
 void usart_task(void *pdata)

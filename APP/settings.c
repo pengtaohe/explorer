@@ -166,8 +166,8 @@ u8*const sysset_system_update_msg_tbl[GUI_LANGUAGE_NUM]=
 //系统更新结果提示
 u8*const sysset_system_update_err_tbl[3][GUI_LANGUAGE_NUM]=
 {
-{"系统文件更新成功!","系統文件更新成功!","SYSTEM file lost!",},
-{"系统文件丢失!","系統文件丟失!","SYSTEM file lost!",},
+{"系统文件更新成功!","系統文件更新成功!","SYSTEM file update success!",},
+{"系统文件丢失!","系統文件丟失!","SYSTEM file lost!!",},
 {"用户终止更新!","用戶終止更新!","User stop update!",},
 };
 //系统信息标注表
